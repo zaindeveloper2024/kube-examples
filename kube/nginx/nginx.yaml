@@ -19,6 +19,9 @@ spec:
         image: nginx:1.27
         ports:
         - containerPort: 80
+        volumeMounts:
+        - name: nginx-index-html
+          mountPath: /usr/share/nginx/html
         resources:
           requests:
             cpu: "100m"
@@ -26,6 +29,10 @@ spec:
           limits:
             cpu: "200m"
             memory: "256Mi"
+      volumes:
+      - name: nginx-index-html
+        configMap:
+          name: nginx-index-html
 ---
 apiVersion: v1
 kind: Service
@@ -39,3 +46,20 @@ spec:
     port: 80
     targetPort: 80
   type: NodePort
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-index-html
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Welcome to Nginx</title>
+    </head>
+    <body>
+        <h1>Welcome to my custom Nginx page!</h1>
+        <p>This is a custom index page.</p>
+    </body>
+    </html>
